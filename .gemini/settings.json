@@ -1,0 +1,45 @@
+{
+  "hooks": {
+    "AfterTool": [
+      {
+        "matcher": "write_file",
+        "hooks": [
+          {
+            "name": "build-verification",
+            "type": "command",
+            "command": "bash .gemini/hooks/build-check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "replace",
+        "hooks": [
+          {
+            "name": "build-verification",
+            "type": "command",
+            "command": "bash .gemini/hooks/build-check.sh"
+          }
+        ]
+      }
+    ],
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "name": "regression-check",
+            "type": "command",
+            "command": "bash .gemini/hooks/regression-check.sh"
+          }
+        ]
+      }
+    ],
+    "AfterAgent": [
+      {
+        "name": "doc-sync-check",
+        "type": "command",
+        "command": "bash .gemini/hooks/doc-sync-check.sh"
+      }
+    ]
+  }
+}

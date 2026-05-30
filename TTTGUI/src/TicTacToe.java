@@ -31,6 +31,8 @@ public class TicTacToe {
 
     public static boolean isPVComp;
 
+    private static Timer compTimer;
+
     private static final Font typicalFont = new Font("Arial", Font.PLAIN, 20);
     private static final EmptyBorder padding = new EmptyBorder(10, 10, 10, 10);
 
@@ -73,45 +75,7 @@ public class TicTacToe {
                     }
 
                     if (gameOver) {
-                        if (GameAnalyzer.isWinX(board)) {
-                            String playerName = "";
-                            if (player1.isX()) {
-                                playerName = "" + player1.getName();
-                                player1.setNumWins(player1.getNumWins() + 1);
-                                player2.setNumLosses(player2.getNumLosses() + 1);
-                                player1Wins.setText(player1.getNumWins() + " Wins");
-                                player2Losses.setText(player2.getNumLosses() + " Losses");
-                            } else {
-                                playerName = player2.getName();
-                                player2.setNumWins(player2.getNumWins() + 1);
-                                player1.setNumLosses(player1.getNumLosses() + 1);
-                                player2Wins.setText(player2.getNumWins() + " Wins");
-                                player1Losses.setText(player1.getNumLosses() + " Losses");
-                            }
-                            message.setText("Game over. " + playerName + " won the game!");
-                        } else if (GameAnalyzer.isWinO(board)) {
-                            String playerName = "";
-                            if (!player1.isX()) {
-                                playerName = "" + player1.getName();
-                                player1.setNumWins(player1.getNumWins() + 1);
-                                player2.setNumLosses(player2.getNumLosses() + 1);
-                                player1Wins.setText(player1.getNumWins() + " Wins");
-                                player2Losses.setText(player2.getNumLosses() + " Losses");
-                            } else {
-                                playerName = player2.getName();
-                                player2.setNumWins(player2.getNumWins() + 1);
-                                player1.setNumLosses(player1.getNumLosses() + 1);
-                                player2Wins.setText(player2.getNumWins() + " Wins");
-                                player1Losses.setText(player1.getNumLosses() + " Losses");
-                            }
-                            message.setText("Game over. " + playerName + " won the game!");
-                        } else { //must be a draw
-                            message.setText("Game over. It's a draw!");
-                            player1.setNumDraws(player1.getNumDraws() + 1);
-                            player2.setNumDraws(player2.getNumDraws() + 1);
-                            player1Draws.setText(player1.getNumDraws() + " Draws");
-                            player2Draws.setText(player2.getNumDraws() + " Draws");
-                        }
+                        applyGameOverResult();
                     } else if (!tryAgain) {
                         if (isPlayer1Turn) {
                             message.setText("It's " + player1.getName() + "'s turn.");
@@ -122,133 +86,34 @@ public class TicTacToe {
                         message.setText("That space is already taken! Try again.");
                     }
 
-                    if (isPVComp && !GameAnalyzer.gameOver(board)){
-                        //System.out.println("made it here");
-                        if (player2.isSmartComputer()) {
-                            //System.out.println("made it here too");
-                            int move = GameAnalyzer.makeSmartMove(board);
-                            int identifier = move;
-                            //System.out.println(move);
-                            GridSpace compButton = board.grid.get(identifier);
-
-                            String compMark = "";
-                            if (player2.isX()) compMark = "X";
-                            else compMark = "O";
-
-                            GridSpace.State compNewState = GridSpace.State.EMPTY;
-                            if (compMark.equals("X")) {
-                                compNewState = GridSpace.State.X;
-                            } else {
-                                compNewState = GridSpace.State.O;
-                            }
-                            compButton.setCurrentState(compNewState);
-                            compButton.setText(compMark);
-                            board.updateGrid(identifier, compButton);
-                            isPlayer1Turn = !isPlayer1Turn;
-                            if (GameAnalyzer.gameOver(board)) {
-                                if (GameAnalyzer.isWinX(board)) {
-                                    String playerName = "";
-                                    if (player1.isX()) {
-                                        playerName = "" + player1.getName();
-                                        player1.setNumWins(player1.getNumWins() + 1);
-                                        player2.setNumLosses(player2.getNumLosses() + 1);
-                                        player1Wins.setText(player1.getNumWins() + " Wins");
-                                        player2Losses.setText(player2.getNumLosses() + " Losses");
-                                    } else {
-                                        playerName = player2.getName();
-                                        player2.setNumWins(player2.getNumWins() + 1);
-                                        player1.setNumLosses(player1.getNumLosses() + 1);
-                                        player2Wins.setText(player2.getNumWins() + " Wins");
-                                        player1Losses.setText(player1.getNumLosses() + " Losses");
-                                    }
-                                    message.setText("Game over. " + playerName + " won the game!");
-                                } else if (GameAnalyzer.isWinO(board)) {
-                                    String playerName = "";
-                                    if (!player1.isX()) {
-                                        playerName = "" + player1.getName();
-                                        player1.setNumWins(player1.getNumWins() + 1);
-                                        player2.setNumLosses(player2.getNumLosses() + 1);
-                                        player1Wins.setText(player1.getNumWins() + " Wins");
-                                        player2Losses.setText(player2.getNumLosses() + " Losses");
-                                    } else {
-                                        playerName = player2.getName();
-                                        player2.setNumWins(player2.getNumWins() + 1);
-                                        player1.setNumLosses(player1.getNumLosses() + 1);
-                                        player2Wins.setText(player2.getNumWins() + " Wins");
-                                        player1Losses.setText(player1.getNumLosses() + " Losses");
-                                    }
-                                    message.setText("Game over. " + playerName + " won the game!");
-                                } else { //must be a draw
-                                    message.setText("Game over. It's a draw!");
-                                    player1.setNumDraws(player1.getNumDraws() + 1);
-                                    player2.setNumDraws(player2.getNumDraws() + 1);
-                                    player1Draws.setText(player1.getNumDraws() + " Draws");
-                                    player2Draws.setText(player2.getNumDraws() + " Draws");
+                    if (isPVComp && !GameAnalyzer.gameOver(board)) {
+                        message.setText("Computer is thinking...");
+                        setGridEnabled(false);
+                        compTimer = new Timer(500, new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent evt) {
+                                int identifier = player2.isSmartComputer()
+                                        ? GameAnalyzer.makeSmartMove(board)
+                                        : GameAnalyzer.makeRandomMove(board);
+                                GridSpace compButton = board.grid.get(identifier);
+                                String compMark = player2.isX() ? "X" : "O";
+                                GridSpace.State compNewState = compMark.equals("X") ? GridSpace.State.X : GridSpace.State.O;
+                                compButton.setCurrentState(compNewState);
+                                compButton.setText(compMark);
+                                board.updateGrid(identifier, compButton);
+                                isPlayer1Turn = !isPlayer1Turn;
+                                setGridEnabled(true);
+                                if (GameAnalyzer.gameOver(board)) {
+                                    applyGameOverResult();
+                                } else {
+                                    message.setText("It's " + player1.getName() + "'s turn.");
                                 }
+                                game.revalidate();
+                                game.repaint();
                             }
-                            game.update(game.getGraphics());
-                        } else {
-                            int identifier = GameAnalyzer.makeRandomMove(board);
-
-                            GridSpace compButton = board.grid.get(identifier);
-
-                            String compMark = "";
-                            if (player2.isX()) compMark = "X";
-                            else compMark = "O";
-
-                            GridSpace.State compNewState = GridSpace.State.EMPTY;
-                            if (compMark.equals("X")) {
-                                compNewState = GridSpace.State.X;
-                            } else {
-                                compNewState = GridSpace.State.O;
-                            }
-                            compButton.setCurrentState(compNewState);
-                            compButton.setText(compMark);
-                            board.updateGrid(identifier, compButton);
-                            isPlayer1Turn = !isPlayer1Turn;
-                            if (GameAnalyzer.gameOver(board)) {
-                                if (GameAnalyzer.isWinX(board)) {
-                                    String playerName = "";
-                                    if (player1.isX()) {
-                                        playerName = "" + player1.getName();
-                                        player1.setNumWins(player1.getNumWins() + 1);
-                                        player2.setNumLosses(player2.getNumLosses() + 1);
-                                        player1Wins.setText(player1.getNumWins() + " Wins");
-                                        player2Losses.setText(player2.getNumLosses() + " Losses");
-                                    } else {
-                                        playerName = player2.getName();
-                                        player2.setNumWins(player2.getNumWins() + 1);
-                                        player1.setNumLosses(player1.getNumLosses() + 1);
-                                        player2Wins.setText(player2.getNumWins() + " Wins");
-                                        player1Losses.setText(player1.getNumLosses() + " Losses");
-                                    }
-                                    message.setText("Game over. " + playerName + " won the game!");
-                                } else if (GameAnalyzer.isWinO(board)) {
-                                    String playerName = "";
-                                    if (!player1.isX()) {
-                                        playerName = "" + player1.getName();
-                                        player1.setNumWins(player1.getNumWins() + 1);
-                                        player2.setNumLosses(player2.getNumLosses() + 1);
-                                        player1Wins.setText(player1.getNumWins() + " Wins");
-                                        player2Losses.setText(player2.getNumLosses() + " Losses");
-                                    } else {
-                                        playerName = player2.getName();
-                                        player2.setNumWins(player2.getNumWins() + 1);
-                                        player1.setNumLosses(player1.getNumLosses() + 1);
-                                        player2Wins.setText(player2.getNumWins() + " Wins");
-                                        player1Losses.setText(player1.getNumLosses() + " Losses");
-                                    }
-                                    message.setText("Game over. " + playerName + " won the game!");
-                                } else { //must be a draw
-                                    message.setText("Game over. It's a draw!");
-                                    player1.setNumDraws(player1.getNumDraws() + 1);
-                                    player2.setNumDraws(player2.getNumDraws() + 1);
-                                    player1Draws.setText(player1.getNumDraws() + " Draws");
-                                    player2Draws.setText(player2.getNumDraws() + " Draws");
-                                }
-                            }
-                            game.update(game.getGraphics());
-                        }
+                        });
+                        compTimer.setRepeats(false);
+                        compTimer.start();
                     }
 
                     game.update(game.getGraphics());
@@ -258,6 +123,10 @@ public class TicTacToe {
                 JAButton button = (JAButton) e.getSource();
                 Action buttonAction = button.getActionType();
                 if (buttonAction == Action.Restart) {
+                    if (compTimer != null && compTimer.isRunning()) {
+                        compTimer.stop();
+                        setGridEnabled(true);
+                    }
                     board.resetGrid();
 
                     if (isPlayer1Turn) {
@@ -266,57 +135,30 @@ public class TicTacToe {
                         message.setText("NEW GAME! It's " + player2.getName() + "'s turn.");
                     }
 
-                    if (isPVComp && !GameAnalyzer.gameOver(board) && !isPlayer1Turn){
-                        System.out.println("made it here");
-                        if (player2.isSmartComputer()) {
-                            //System.out.println("made it here too");
-                            int move = GameAnalyzer.makeSmartMove(board);
-                            int identifier = move;
-                            //System.out.println(move);
-                            GridSpace compButton = board.grid.get(identifier);
-
-                            String compMark = "";
-                            if (player2.isX()) compMark = "X";
-                            else compMark = "O";
-
-                            GridSpace.State compNewState = GridSpace.State.EMPTY;
-                            if (compMark.equals("X")) {
-                                compNewState = GridSpace.State.X;
-                            } else {
-                                compNewState = GridSpace.State.O;
+                    if (isPVComp && !GameAnalyzer.gameOver(board) && !isPlayer1Turn) {
+                        message.setText("Computer is thinking...");
+                        setGridEnabled(false);
+                        compTimer = new Timer(500, new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent evt) {
+                                int identifier = player2.isSmartComputer()
+                                        ? GameAnalyzer.makeSmartMove(board)
+                                        : GameAnalyzer.makeRandomMove(board);
+                                GridSpace compButton = board.grid.get(identifier);
+                                String compMark = player2.isX() ? "X" : "O";
+                                GridSpace.State compNewState = compMark.equals("X") ? GridSpace.State.X : GridSpace.State.O;
+                                compButton.setCurrentState(compNewState);
+                                compButton.setText(compMark);
+                                board.updateGrid(identifier, compButton);
+                                isPlayer1Turn = !isPlayer1Turn;
+                                setGridEnabled(true);
+                                message.setText("It's " + player1.getName() + "'s turn.");
+                                game.revalidate();
+                                game.repaint();
                             }
-                            compButton.setCurrentState(compNewState);
-                            compButton.setText(compMark);
-                            board.updateGrid(identifier, compButton);
-                            isPlayer1Turn = !isPlayer1Turn;
-
-                            game.update(game.getGraphics());
-                        } else {
-                            int identifier = GameAnalyzer.makeRandomMove(board);
-
-                            GridSpace compButton = board.grid.get(identifier);
-
-                            String compMark = "";
-                            if (player2.isX()) compMark = "X";
-                            else compMark = "O";
-
-                            GridSpace.State compNewState = GridSpace.State.EMPTY;
-                            if (compMark.equals("X")) {
-                                compNewState = GridSpace.State.X;
-                            } else {
-                                compNewState = GridSpace.State.O;
-                            }
-                            compButton.setCurrentState(compNewState);
-                            compButton.setText(compMark);
-                            board.updateGrid(identifier, compButton);
-                            board.update(board.getGraphics());
-
-                            isPlayer1Turn = !isPlayer1Turn;
-                            board.update(board.getGraphics());
-                            game.update(game.getGraphics());
-
-                        }
-                        message.setText("It's " + player1.getName() + "'s turn.");
+                        });
+                        compTimer.setRepeats(false);
+                        compTimer.start();
                     }
 
                     board.update(board.getGraphics());
@@ -333,8 +175,10 @@ public class TicTacToe {
                     player2Losses.setText(player2.getNumLosses() + " Losses");
                     player2Draws.setText(player2.getNumDraws() + " Draws");
                 } else if (buttonAction == Action.ChangeGameConfig) {
+                    if (compTimer != null && compTimer.isRunning()) compTimer.stop();
                     game.dispose();
                 } else if (buttonAction == Action.ChangeGameMode) {
+                    if (compTimer != null && compTimer.isRunning()) compTimer.stop();
                     game.dispose();
                     startGame();
                 }
@@ -668,6 +512,55 @@ public class TicTacToe {
 
     public static void gameCompVComp() {
     }
+
+    private static void applyGameOverResult() {
+        if (GameAnalyzer.isWinX(board)) {
+            String playerName;
+            if (player1.isX()) {
+                playerName = player1.getName();
+                player1.setNumWins(player1.getNumWins() + 1);
+                player2.setNumLosses(player2.getNumLosses() + 1);
+                player1Wins.setText(player1.getNumWins() + " Wins");
+                player2Losses.setText(player2.getNumLosses() + " Losses");
+            } else {
+                playerName = player2.getName();
+                player2.setNumWins(player2.getNumWins() + 1);
+                player1.setNumLosses(player1.getNumLosses() + 1);
+                player2Wins.setText(player2.getNumWins() + " Wins");
+                player1Losses.setText(player1.getNumLosses() + " Losses");
+            }
+            message.setText("Game over. " + playerName + " won the game!");
+        } else if (GameAnalyzer.isWinO(board)) {
+            String playerName;
+            if (!player1.isX()) {
+                playerName = player1.getName();
+                player1.setNumWins(player1.getNumWins() + 1);
+                player2.setNumLosses(player2.getNumLosses() + 1);
+                player1Wins.setText(player1.getNumWins() + " Wins");
+                player2Losses.setText(player2.getNumLosses() + " Losses");
+            } else {
+                playerName = player2.getName();
+                player2.setNumWins(player2.getNumWins() + 1);
+                player1.setNumLosses(player1.getNumLosses() + 1);
+                player2Wins.setText(player2.getNumWins() + " Wins");
+                player1Losses.setText(player1.getNumLosses() + " Losses");
+            }
+            message.setText("Game over. " + playerName + " won the game!");
+        } else {
+            message.setText("Game over. It's a draw!");
+            player1.setNumDraws(player1.getNumDraws() + 1);
+            player2.setNumDraws(player2.getNumDraws() + 1);
+            player1Draws.setText(player1.getNumDraws() + " Draws");
+            player2Draws.setText(player2.getNumDraws() + " Draws");
+        }
+    }
+
+    private static void setGridEnabled(boolean enabled) {
+        for (GridSpace space : board.grid) {
+            space.setEnabled(enabled);
+        }
+    }
+
     public static int showStartMenu() {
         String[] options = {"Computer vs. Computer Simulation", "Player vs. Computer", "Player vs. Player"};
         int result = JOptionPane.showOptionDialog(null, "Choose what game mode do you want " +

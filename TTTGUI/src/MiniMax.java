@@ -1,4 +1,4 @@
-
+// MiniMax algorithm — inspired by github.com/DavidHurst/MiniMax-TicTacToe-Java
 public class MiniMax {
 
     // Scores for Minimax

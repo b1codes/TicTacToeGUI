@@ -193,21 +193,36 @@ public class GameAnalyzer {
         }
     }
 
+    // Returns the 0-8 index of an immediate winning cell for `player`, or -1 if none.
+    private static int findImmediateMove(char[][] board, char player) {
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                if (board[r][c] == ' ') {
+                    board[r][c] = player;
+                    boolean wins = (player == 'X') ? isWinX(board) : isWinO(board);
+                    board[r][c] = ' ';
+                    if (wins) return (r * 3) + c;
+                }
+            }
+        }
+        return -1;
+    }
+
     public static int makeSmartMove(Grid board) {
-        // 1. Convert the UI Grid to a char array for the algorithm
         char[][] currCharGrid = getCharGrid(board);
+        char computerMark = TicTacToe.player2.isX() ? 'X' : 'O';
+        char opponentMark = (computerMark == 'X') ? 'O' : 'X';
 
-        // 2. Determine who the computer is (X or O)
-        // We assume the computer is the one currently making the move.
-        // A safer check using your TicTacToe static variables:
-        boolean isComputerX = TicTacToe.player2.isX(); // Assuming computer is player2
+        // Take an immediate win if available.
+        int winMove = findImmediateMove(currCharGrid, computerMark);
+        if (winMove != -1) return winMove;
 
-        // Call Minimax
-        // If computer is X, we want to Maximize. If O, we want to Minimize.
-        // The MiniMax class handles this via the isXTurn parameter.
-        int bestMove = MiniMax.getBestMove(currCharGrid, isComputerX);
+        // Block an immediate opponent win.
+        int blockMove = findImmediateMove(currCharGrid, opponentMark);
+        if (blockMove != -1) return blockMove;
 
-        return bestMove;
+        // Fall back to full minimax search.
+        return MiniMax.getBestMove(currCharGrid, TicTacToe.player2.isX());
     }
 
     public static int makeRandomMove(Grid board) {

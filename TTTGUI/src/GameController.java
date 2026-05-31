@@ -189,9 +189,10 @@ public class GameController {
     }
 
     private boolean configPVP() {
-        String p1Name = JOptionPane.showInputDialog(null, "Enter Player 1's Name.", "",
-                JOptionPane.QUESTION_MESSAGE, null, null, "Player 1").toString();
-        if (p1Name == null) return false;
+        Object raw1 = JOptionPane.showInputDialog(null, "Enter Player 1's Name.", "",
+                JOptionPane.QUESTION_MESSAGE, null, null, "Player 1");
+        if (raw1 == null) return false;
+        String p1Name = raw1.toString();
 
         String[] markOptions = {"O", "X"};
         int player1Mark = JOptionPane.showOptionDialog(null, "Choose Player 1's Mark.", "",
@@ -199,9 +200,10 @@ public class GameController {
         if (player1Mark == -1) return false;
         boolean player1IsX = (player1Mark == 1);
 
-        String p2Name = JOptionPane.showInputDialog(null, "Enter Player 2's Name.", "",
-                JOptionPane.QUESTION_MESSAGE, null, null, "Player 2").toString();
-        if (p2Name == null) return false;
+        Object raw2 = JOptionPane.showInputDialog(null, "Enter Player 2's Name.", "",
+                JOptionPane.QUESTION_MESSAGE, null, null, "Player 2");
+        if (raw2 == null) return false;
+        String p2Name = raw2.toString();
 
         String[] startOptions = {"Player 2", "Player 1"};
         int startingPlayer = JOptionPane.showOptionDialog(null, "Which Player Goes First?", "",
@@ -216,9 +218,10 @@ public class GameController {
     }
 
     private boolean configPVComp() {
-        String p1Name = JOptionPane.showInputDialog(null, "Enter Player 1's Name.", "",
-                JOptionPane.QUESTION_MESSAGE, null, null, "Player 1").toString();
-        if (p1Name == null) return false;
+        Object raw1 = JOptionPane.showInputDialog(null, "Enter Player 1's Name.", "",
+                JOptionPane.QUESTION_MESSAGE, null, null, "Player 1");
+        if (raw1 == null) return false;
+        String p1Name = raw1.toString();
 
         String[] markOptions = {"O", "X"};
         int player1Mark = JOptionPane.showOptionDialog(null, "Choose Player's Mark.", "",

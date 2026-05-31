@@ -147,7 +147,7 @@ public class GameController {
                 if (GameAnalyzer.gameOver(model.getBoard())) {
                     applyGameOverResult();
                 } else {
-                    view.setMessage("It's " + model.getPlayer1().getName() + "'s turn.");
+                    view.setMessage("It's " + model.getCurrentPlayer().getName() + "'s turn.");
                 }
                 view.refresh();
             }
@@ -248,11 +248,8 @@ public class GameController {
     }
 
     private boolean configCompVComp() {
-        boolean computer1IsX = Math.random() < 0.5;
-        boolean computer1Starts = Math.random() < 0.5;
-        Player p1 = new Player("Computer 1", true, false, computer1IsX, computer1Starts);
-        Player p2 = new Player("Computer 2", true, false, !computer1IsX, !computer1Starts);
-        model = new GameModel(p1, p2, computer1Starts, false);
-        return true;
+        JOptionPane.showMessageDialog(null, "Computer vs. Computer mode is not yet implemented.",
+                "Not Yet Implemented", JOptionPane.INFORMATION_MESSAGE);
+        return false;
     }
 }

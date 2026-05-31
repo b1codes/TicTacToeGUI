@@ -124,6 +124,9 @@ public class GameController {
                 view.dispose();
                 start();
                 break;
+
+            default:
+                break;
         }
     }
 

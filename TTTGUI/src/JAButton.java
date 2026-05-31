@@ -1,17 +1,18 @@
 import javax.swing.*;
 
 public class JAButton extends JButton {
-    private TicTacToe.Action actionType;
+    public enum Action {
+        ChangeGridSpace, Restart, ChangeGameConfig, ChangeGameMode, Quit, ResetPlayerStats
+    }
 
-    public JAButton(String text, TicTacToe.Action action) {
+    private Action actionType;
+
+    public JAButton(String text, Action action) {
         super(text);
         this.actionType = action;
-        this.addActionListener(TicTacToe.actionListener);
     }
 
-    public TicTacToe.Action getActionType() {
+    public Action getActionType() {
         return this.actionType;
     }
-
-
 }

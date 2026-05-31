@@ -87,8 +87,9 @@ public class TicTacToe {
                         compTimer = new Timer(500, new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent evt) {
+                                char computerMark = player2.isX() ? 'X' : 'O';
                                 int identifier = player2.isSmartComputer()
-                                        ? GameAnalyzer.makeSmartMove(board)
+                                        ? GameAnalyzer.makeSmartMove(board, computerMark)
                                         : GameAnalyzer.makeRandomMove(board);
                                 GridSpace compButton = board.grid.get(identifier);
                                 String compMark = player2.isX() ? "X" : "O";
@@ -136,8 +137,9 @@ public class TicTacToe {
                         compTimer = new Timer(500, new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent evt) {
+                                char computerMark = player2.isX() ? 'X' : 'O';
                                 int identifier = player2.isSmartComputer()
-                                        ? GameAnalyzer.makeSmartMove(board)
+                                        ? GameAnalyzer.makeSmartMove(board, computerMark)
                                         : GameAnalyzer.makeRandomMove(board);
                                 GridSpace compButton = board.grid.get(identifier);
                                 String compMark = player2.isX() ? "X" : "O";

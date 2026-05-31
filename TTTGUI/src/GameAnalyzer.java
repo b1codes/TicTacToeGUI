@@ -208,9 +208,8 @@ public class GameAnalyzer {
         return -1;
     }
 
-    public static int makeSmartMove(Grid board) {
+    public static int makeSmartMove(Grid board, char computerMark) {
         char[][] currCharGrid = getCharGrid(board);
-        char computerMark = TicTacToe.player2.isX() ? 'X' : 'O';
         char opponentMark = (computerMark == 'X') ? 'O' : 'X';
 
         // Take an immediate win if available.
@@ -222,7 +221,7 @@ public class GameAnalyzer {
         if (blockMove != -1) return blockMove;
 
         // Fall back to full minimax search.
-        return MiniMax.getBestMove(currCharGrid, TicTacToe.player2.isX());
+        return MiniMax.getBestMove(currCharGrid, computerMark == 'X');
     }
 
     public static int makeRandomMove(Grid board) {

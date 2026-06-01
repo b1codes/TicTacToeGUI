@@ -1,3 +1,7 @@
+package view;
+
+import model.Player;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

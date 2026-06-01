@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Compile from the project root (requires JDK 8+):
 ```bash
-javac TTTGUI/src/*.java -d TTTGUI/out/production/TTTGUI
+find TTTGUI/src -name "*.java" | xargs javac -d TTTGUI/out/production/TTTGUI
 ```
 
 Run the application:
@@ -18,20 +18,38 @@ There is no build tool (no Maven/Gradle). The project is configured for IntelliJ
 
 ## Architecture
 
-All source is in `TTTGUI/src/`. There are no packages — all classes are in the default package.
+Source is in `TTTGUI/src/` organised into four packages plus a root entry point:
 
-**Flow:** `TicTacToe.main()` → `startGame()` → config dialogs → `gamePVP()` / `gamePVComp()` / `gameCompVComp()`
+```
+TTTGUI/src/
+  TicTacToe.java        ← entry point (default package); calls GameController.start()
+  model/
+    GameModel.java      ← board state (char[][]), players, turn, isPVComp
+    Player.java         ← player data and win/loss/draw stats
+  view/
+    GameView.java       ← JFrame + all UI panels; exposes mutation methods
+    Grid.java           ← JPanel containing 9 GridSpace buttons
+    GridSpace.java      ← individual cell button; holds State (EMPTY/X/O) and 0–8 index
+    JAButton.java       ← JButton subclass with Action enum; no auto-listener wiring
+  controller/
+    GameController.java ← ActionListener, comp timer, config dialogs, M↔V coordination
+  ai/
+    GameAnalyzer.java   ← win/draw detection and move selection (smart + random)
+    MiniMax.java        ← recursive minimax algorithm
+```
+
+**Flow:** `TicTacToe.main()` → `GameController.start()` → config dialogs → `launchGame()` → Swing event loop
 
 **Key design decisions:**
-- `TicTacToe` uses entirely static fields for all game state (`board`, `player1`, `player2`, `isPlayer1Turn`, `isPVComp`). There is no instance-based state management.
-- A single static `ActionListener` in `TicTacToe` handles all UI events by checking `e.getSource()` type (`GridSpace` vs `JAButton`) and the source's `Action` enum type.
-- `GameAnalyzer` bridges GUI state and AI: it converts `Grid` (a list of `GridSpace` Swing components) to a `char[][]` for use by `MiniMax`. Both `Grid`-based and `char[][]`-based overloads exist for win/draw detection.
-- `MiniMax.getBestMove()` always assumes X maximizes and O minimizes. The computer is always `player2`.
-- `GridSpace` extends `JButton` and stores its own board state (`State.EMPTY/X/O`) and a 0–8 identifier for its position. `JAButton` similarly extends `JButton` with an `Action` enum field.
-- The `gameCompVComp()` method is currently unimplemented (empty body).
+- `GameModel` is the source of truth for board state (`char[][]`). `GameController` updates model and view in lockstep on every move.
+- `GameController` owns the single `ActionListener` and wires it to all buttons and grid spaces after constructing `GameView`. `JAButton` no longer auto-registers a listener in its constructor.
+- `GameAnalyzer.makeSmartMove(Grid, char)` takes the computer's mark as a parameter — no references to `GameController` or `GameModel`.
+- `MiniMax.getBestMove()` always assumes X maximises and O minimises.
+- `GameView.resetBoard()` stores the registered `ActionListener` and re-applies it to the new `GridSpace` instances created by `Grid.resetGrid()`.
+- Computer vs. Computer mode is not yet implemented — selecting it shows a dialog and returns to the start menu.
 
 ## Conventions
 
 - Java Swing exclusively for GUI — no JavaFX or other frameworks.
-- Game logic and AI belong in `GameAnalyzer` and `MiniMax`; UI orchestration belongs in `TicTacToe`.
+- Game logic and AI belong in `ai/`; UI components in `view/`; state in `model/`; coordination in `controller/`.
 - Standard Java camelCase naming.

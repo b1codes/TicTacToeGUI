@@ -1,3 +1,8 @@
+package ai;
+
+import view.Grid;
+import view.GridSpace;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -225,7 +230,6 @@ public class GameAnalyzer {
     }
 
     public static int makeRandomMove(Grid board) {
-        // System.out.println("made it here");
         ArrayList<Integer> emptySpaces = getEmptySpaces(board);
         int rnd = new Random().nextInt(emptySpaces.size());
         return emptySpaces.get(rnd);

@@ -1,3 +1,5 @@
+package ai;
+
 // MiniMax algorithm — inspired by github.com/DavidHurst/MiniMax-TicTacToe-Java
 public class MiniMax {
 
@@ -8,7 +10,7 @@ public class MiniMax {
 
     /**
      * Calculates the best move for the given player.
-     * 
+     *
      * @param board   The current game state as characters
      * @param isXTurn True if the computer is playing as 'X'
      * @return The 0-8 index of the best move

@@ -1,3 +1,5 @@
+package model;
+
 public class GameModel {
     private Player player1;
     private Player player2;

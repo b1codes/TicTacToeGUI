@@ -50,6 +50,8 @@ public class GameController {
 
         if (model.isPVComp() && !model.isPlayer1Turn()) {
             triggerComputerMove();
+        } else if (gameMode == 0) {
+            triggerCompVCompLoop();
         }
     }
 
@@ -104,6 +106,8 @@ public class GameController {
                 view.setMessage("NEW GAME! It's " + model.getCurrentPlayer().getName() + "'s turn.");
                 if (model.isPVComp() && !model.isPlayer1Turn()) {
                     triggerComputerMove();
+                } else if (gameMode == 0) {
+                    triggerCompVCompLoop();
                 }
                 break;
 
@@ -162,6 +166,32 @@ public class GameController {
             }
         });
         compTimer.setRepeats(false);
+        compTimer.start();
+    }
+
+    private void triggerCompVCompLoop() {
+        view.setGridEnabled(false);
+        compTimer = new Timer(700, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Player current = model.getCurrentPlayer();
+                char mark = current.isX() ? 'X' : 'O';
+                int index = current.isSmartComputer()
+                        ? GameAnalyzer.makeSmartMove(view.getGrid(), mark)
+                        : GameAnalyzer.makeRandomMove(view.getGrid());
+                model.applyMove(index, mark);
+                view.updateCell(index, mark);
+                model.setPlayer1Turn(!model.isPlayer1Turn());
+                if (GameAnalyzer.gameOver(model.getBoard())) {
+                    compTimer.stop();
+                    applyGameOverResult();
+                } else {
+                    view.setMessage("It's " + model.getCurrentPlayer().getName() + "'s turn.");
+                }
+                view.refresh();
+            }
+        });
+        compTimer.setRepeats(true);
         compTimer.start();
     }
 
@@ -257,8 +287,24 @@ public class GameController {
     }
 
     private boolean configCompVComp() {
-        JOptionPane.showMessageDialog(null, "Computer vs. Computer mode is not yet implemented.",
-                "Not Yet Implemented", JOptionPane.INFORMATION_MESSAGE);
-        return false;
+        String[] levelOptions = {"Smart", "Normal"};
+        int comp1Level = JOptionPane.showOptionDialog(null, "Choose Computer 1's Level.", "",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, levelOptions, null);
+        if (comp1Level == -1) return false;
+
+        int comp2Level = JOptionPane.showOptionDialog(null, "Choose Computer 2's Level.", "",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, levelOptions, null);
+        if (comp2Level == -1) return false;
+
+        String[] startOptions = {"Computer 2", "Computer 1"};
+        int startingComp = JOptionPane.showOptionDialog(null, "Which Computer Goes First?", "",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, startOptions, null);
+        if (startingComp == -1) return false;
+        boolean comp1Starts = (startingComp == 1);
+
+        Player p1 = new Player("Computer 1", true, comp1Level == 0, true, comp1Starts);
+        Player p2 = new Player("Computer 2", true, comp2Level == 0, false, !comp1Starts);
+        model = new GameModel(p1, p2, comp1Starts, false);
+        return true;
     }
 }
